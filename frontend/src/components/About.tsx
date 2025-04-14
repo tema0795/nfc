@@ -1,4 +1,4 @@
-import { Background } from './background.tsx'
+import { Background } from './Background.tsx'
 
 export const About = () =>
 {
