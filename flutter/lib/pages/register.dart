@@ -1,37 +1,27 @@
 import 'package:flutter/material.dart';
-import "../const.dart";
+import 'package:onymus/const.dart';
+import 'package:onymus/widgets/alert.dart';
+import 'package:onymus/widgets/appbar.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<Register> createState() => _RegisterState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterPageState extends State<RegisterPage> {
   String login = "";
   String password = "";
   String confirmPassword = "";
 
-  AlertDialog registerAlert = AlertDialog(
-    title: Text("Регистрация"),
-    content: Text("Регистрация прошла успешно!"),
-    actions: [TextButton(onPressed: () => {}, child: const Text("ОК"))],
-  );
-
-  AlertDialog passwordAlert = AlertDialog(
-    title: Text("Регистрация"),
-    content: Text("Пароли не совпадают!"),
-    actions: [TextButton(onPressed: () => {}, child: const Text("ОК"))],
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(APP_NAME)),
+      appBar: onymusAppBar,
       body: Center(
         child: ListView(
-          padding: EdgeInsets.all(PAGE_PADDING),
+          padding: EdgeInsets.all(pagePadding),
           shrinkWrap: true,
           children: [
             const Image(image: AssetImage("assets/images/logo.png")),
@@ -57,10 +47,13 @@ class _RegisterState extends State<Register> {
                   () => showDialog(
                     context: context,
                     builder:
-                        (BuildContext _) =>
-                            password == confirmPassword
-                                ? registerAlert
-                                : passwordAlert,
+                        (BuildContext c) => createOKAlert(
+                          "Регистрация",
+                          password == confirmPassword
+                              ? "Регистрация прошла успешно!"
+                              : "Пароли не совпадают!",
+                          c,
+                        ),
                   ),
             ),
           ],

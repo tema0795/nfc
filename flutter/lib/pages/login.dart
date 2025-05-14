@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
-import "../const.dart";
+import 'package:onymus/const.dart';
+import 'package:onymus/widgets/alert.dart';
+import 'package:onymus/widgets/appbar.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginPageState extends State<LoginPage> {
   String login = "";
   String password = "";
-
-  AlertDialog loginAlert = AlertDialog(
-    title: Text("Вход"),
-    content: Text("Вход выполнен успешно!"),
-    actions: [TextButton(onPressed: () => {}, child: const Text("ОК"))],
-  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(APP_NAME)),
+      appBar: onymusAppBar,
       body: Center(
         child: ListView(
-          padding: EdgeInsets.all(PAGE_PADDING),
+          padding: EdgeInsets.all(pagePadding),
           shrinkWrap: true,
           children: [
             const Image(image: AssetImage("assets/images/logo.png")),
@@ -42,7 +38,9 @@ class _LoginState extends State<Login> {
               onPressed:
                   () => showDialog(
                     context: context,
-                    builder: (BuildContext _) => loginAlert,
+                    builder:
+                        (BuildContext c) =>
+                            createOKAlert("Вход", "Вход выполнен успешно!", c),
                   ),
             ),
           ],

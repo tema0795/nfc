@@ -1,4 +1,7 @@
-const String APP_NAME = "Onymus";
+import 'package:flutter_svg/flutter_svg.dart';
 
-const double PAGE_PADDING = 50.0;
-const double BUTTON_PADDING = 15.0;
+const String appName = "Onymus";
+
+const double pagePadding = 50.0;
+const double pageSpacing = 24.0;
+const double buttonPadding = 15.0;
