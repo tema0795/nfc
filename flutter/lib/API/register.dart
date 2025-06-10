@@ -28,9 +28,11 @@ class NewUser {
         'username': username,
         'password': password,
         'password2': password2,
+        /*
         'email': email,
         'first_name': firstName,
         'last_name': lastName,
+        */
       }),
     );
     if (response.statusCode == 201) {

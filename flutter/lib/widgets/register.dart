@@ -67,6 +67,7 @@ class _RegisterState extends State<Register> {
   }
 
   FutureBuilder<NewUser> buildFutureBuilder() {
+    //print([login, password, confirmPassword]);
     _futureUser = NewUser.create(
                     username : login,
                     password: password,
@@ -79,7 +80,7 @@ class _RegisterState extends State<Register> {
         if (snapshot.hasData) {
           return registerAlert;
         } else if (snapshot.hasError) {
-          return RegErrorAlert(errors: snapshot.error,);
+          return RegErrorAlert(errors: snapshot.error as Map<String, List<String>>);
         }
 
         return const CircularProgressIndicator();
@@ -93,8 +94,9 @@ class RegErrorAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(errors);
     return AlertDialog(
-      title: Text("Регистрация"),
+      title: Text("Ошибка регистрации"),
       content: Column(children:
        errors.values.expand((list) => list).map((str) => Text(str)).toList()),
       actions: [TextButton(onPressed: () => {}, child: const Text("ОК"))],
