@@ -1,0 +1,1 @@
+ C:\\Users\\krivd\\StudioProjects\\nfc\\.dart_tool\\flutter_build\\1662d7dd5399414a90f61c1ab1e1e66d\\dart_build_result.json: 
