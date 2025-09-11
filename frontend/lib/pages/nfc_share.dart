@@ -1,76 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nfc_manager/nfc_manager.dart';
-import 'package:nfc_manager/polling_options.dart';
-import 'package:nfc_manager/ndef_record.dart';
 
-class NfcSharePage extends StatefulWidget {
+class NfcSharePage extends StatelessWidget {
   const NfcSharePage({super.key});
-
-  @override
-  State<NfcSharePage> createState() => _NfcSharePageState();
-}
-
-class _NfcSharePageState extends State<NfcSharePage> {
-  String _status = "Ожидание NFC-метки...";
-  late NfcManager _nfcManager;
-
-  @override
-  void initState() {
-    super.initState();
-    _nfcManager = NfcManager.instance;
-    _startNfcSession();
-  }
-
-  @override
-  void dispose() {
-    _nfcManager.stopSession();
-    super.dispose();
-  }
-
-  Future<void> _startNfcSession() async {
-    try {
-      bool isAvailable = await _nfcManager.isAvailable();
-
-      if (!isAvailable) {
-        setState(() {
-          _status = "NFC недоступен или выключен";
-        });
-        return;
-      }
-
-      await _nfcManager.startSession(
-        pollingOptions: PollingOptions.all(), // ← Обязательно!
-        onDiscovered: (NfcTag tag) async {
-          final ndef = Ndef.from(tag);
-          if (ndef == null || !ndef.isWritable) {
-            setState(() {
-              _status = "Метка не поддерживает запись";
-            });
-            return;
-          }
-
-          // Данные для записи
-          final userData = "ФИО: Иванов Иван Иванович\nДолжность: Разработчик\nУровень доступа: Администратор";
-
-          await ndef.write(NdefMessage([
-            NdefRecord.text(userData),
-          ]));
-
-          setState(() {
-            _status = "Данные успешно записаны!";
-          });
-
-          // Остановить сессию через 2 секунды
-          await Future.delayed(const Duration(seconds: 2));
-          Navigator.pop(context);
-        },
-      );
-    } catch (e) {
-      setState(() {
-        _status = "Ошибка: $e";
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +24,53 @@ class _NfcSharePageState extends State<NfcSharePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.nfc, size: 80, color: Colors.white),
-                const SizedBox(height: 30),
+                // Иконка NFC (или Wi-Fi)
+                SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: Image.asset(
+                    'assets/wifi.png',
+                    color: Colors.white,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 50),
+
+                // Информация о пользователе
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.1),
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Фамилия Имя Отчество',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
+
+                // Статус
                 Text(
-                  _status,
-                  style: const TextStyle(
+                  'Ожидание NFC-метки...',
+                  style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -105,13 +78,18 @@ class _NfcSharePageState extends State<NfcSharePage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 50),
+
+                // Кнопка "Назад"
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text(
+                  child: Text(
                     'Отмена',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ],
