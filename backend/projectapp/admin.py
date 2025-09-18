@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
-from .models import Device
+from .models import CustomUser, Device, AccessEvent, DeviceToken
+from .models import Device, DeviceToken
+
 class CustomUserAdmin(UserAdmin):
  
     list_display = ("username", "email", "first_name", "last_name")
@@ -9,10 +10,17 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(CustomUser, CustomUserAdmin)
 
-from .models import Device
+
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('uid', 'status', 'owner', 'created_at')
-    list_filter = ('status',)
-    search_fields = ('uid', 'owner')
+    list_display = ("device_id", "owner", "status")
+    list_filter = ("status",)
+    search_fields = ("device_id", "owner")
+
+
+@admin.register(DeviceToken)
+class DeviceTokenAdmin(admin.ModelAdmin):
+    list_display = ("device", "token", "created_at", "expires_at")
+    list_filter = ("created_at", "expires_at")
+    search_fields = ("device__device_id", "token")

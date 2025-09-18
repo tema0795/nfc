@@ -40,6 +40,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'projectapp',
     'django_api',
+    'django_crontab'
+]
+
+CRONJOBS = [
+    ('0 * * * *', 'django.core.management.call_command', ['rotate_tokens']),
 ]
 
 MIDDLEWARE = [
