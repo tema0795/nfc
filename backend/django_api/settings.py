@@ -39,6 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'projectapp',
+    'django_api',
+    'django_crontab'
+]
+
+CRONJOBS = [
+    ('0 * * * *', 'django.core.management.call_command', ['rotate_tokens']),
 ]
 
 MIDDLEWARE = [
@@ -74,12 +80,27 @@ WSGI_APPLICATION = 'django_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# settings.py
+
+# ...
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.vafypxqkwcxlrnpkpnow',
+        'PASSWORD': '85047963152',  # Замените это!
+        'HOST': 'aws-1-eu-north-1.pooler.supabase.com',
+        'PORT': '6543',
+        'OPTIONS': {
+            'sslmode': 'require',  # SSL обязателен
+        },
     }
 }
+
+
+
+# ...
 
 
 # Password validation

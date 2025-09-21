@@ -1,13 +1,26 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Device, AccessEvent, DeviceToken
+from .models import Device, DeviceToken
 
-# Register your models here.
-
-# класс предназначенный для регистрации пользователей админкой
 class CustomUserAdmin(UserAdmin):
-    # Отображать следующе поля в админ панели
+ 
     list_display = ("username", "email", "first_name", "last_name")
 
-# добавить функционал регистрации пользователей CustomUser админкой
+
 admin.site.register(CustomUser, CustomUserAdmin)
+
+
+
+@admin.register(Device)
+class DeviceAdmin(admin.ModelAdmin):
+    list_display = ("device_id", "owner", "status")
+    list_filter = ("status",)
+    search_fields = ("device_id", "owner")
+
+
+@admin.register(DeviceToken)
+class DeviceTokenAdmin(admin.ModelAdmin):
+    list_display = ("device", "token", "created_at", "expires_at")
+    list_filter = ("created_at", "expires_at")
+    search_fields = ("device__device_id", "token")
