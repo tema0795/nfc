@@ -2,59 +2,37 @@ import 'package:flutter/material.dart';
 import 'nfc_share.dart';
 import 'profile.dart';
 
-class BottomNavPage extends StatefulWidget {
-  const BottomNavPage({super.key});
+class CustomBottomNavBar extends StatelessWidget {
+  final int currentIndex;
+  final void Function(int)? onTap;
 
-  @override
-  State<BottomNavPage> createState() => _BottomNavPageState();
-}
-
-class _BottomNavPageState extends State<BottomNavPage> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const NfcSharePage(),
-    const ProfilePage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  const CustomBottomNavBar({
+    super.key,
+    required this.currentIndex,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: theme.colorScheme.background,
-        selectedItemColor: theme.colorScheme.primary,
-        unselectedItemColor: theme.colorScheme.onSurface.withOpacity(0.6),
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        selectedLabelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: theme.colorScheme.primary,
+    return BottomNavigationBar(
+      currentIndex: currentIndex,
+      onTap: onTap,
+      backgroundColor: Colors.black,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.grey,
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
+      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.nfc),
+          label: 'Раздача',
         ),
-        unselectedLabelStyle: TextStyle(
-          color: theme.colorScheme.onSurface.withOpacity(0.6),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Профиль',
         ),
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.nfc, color: _selectedIndex == 0 ? theme.colorScheme.primary : null),
-            label: 'Раздача',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: _selectedIndex == 1 ? theme.colorScheme.primary : null),
-            label: 'Профиль',
-          ),
-        ],
-      ),
+      ],
     );
   }
 }

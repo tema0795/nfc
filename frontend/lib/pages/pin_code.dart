@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'bottom_nav.dart';
-import 'dart:io' show exit;
+import 'nfc_share.dart';
 
 class PinCodePage extends StatefulWidget {
   const PinCodePage({super.key});
@@ -15,7 +13,7 @@ class _PinCodePageState extends State<PinCodePage> {
   String? _confirmPin;
 
   void _addDigit(String digit) {
-    if (_pin.length < 4) {
+    if (_pin.length < 4 && RegExp(r'^[0-9]$').hasMatch(digit)) {
       setState(() {
         _pin += digit;
       });
@@ -33,71 +31,35 @@ class _PinCodePageState extends State<PinCodePage> {
     }
   }
 
-  void _exit() {
-    exit(0);
-  }
-
-  Future<void> _handlePinEntered() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isPinSet = prefs.getBool('pin_set') ?? false;
-
-    if (!isPinSet) {
-      if (_confirmPin == null) {
-        setState(() {
-          _confirmPin = _pin;
-          _pin = "";
-        });
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Повторите PIN для подтверждения')),
-          );
-        }
-      } else {
-        if (_pin == _confirmPin) {
-          await prefs.setString('user_pin', _pin);
-          await prefs.setBool('pin_set', true);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('PIN успешно установлен!')),
-            );
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const BottomNavPage()),
-            );
-          }
-        } else {
-          setState(() {
-            _pin = "";
-            _confirmPin = null;
-          });
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('PIN не совпадает. Попробуйте снова.')),
-            );
-          }
-        }
-      }
+  void _handlePinEntered() {
+    if (_confirmPin == null) {
+      // Первый ввод — запоминаем
+      setState(() {
+        _confirmPin = _pin;
+        _pin = "";
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Повторите PIN для подтверждения')),
+      );
     } else {
-      final savedPin = prefs.getString('user_pin');
-      if (_pin == savedPin) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Вход выполнен!')),
-          );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const BottomNavPage()),
-          );
-        }
+      // Второй ввод — проверяем
+      if (_pin == _confirmPin) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('PIN верный!')),
+        );
+        // После PIN → NFC
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const NfcSharePage()),
+        );
       } else {
         setState(() {
           _pin = "";
+          _confirmPin = null;
         });
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Неверный PIN')),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('PIN не совпадает')),
+        );
       }
     }
   }
@@ -114,9 +76,7 @@ class _PinCodePageState extends State<PinCodePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                _confirmPin == null
-                    ? 'Создайте PIN-код'
-                    : 'Подтвердите PIN',
+                _confirmPin == null ? 'Введите PIN' : 'Подтвердите PIN',
                 style: const TextStyle(
                   fontSize: 20,
                   color: Colors.white,
@@ -125,16 +85,12 @@ class _PinCodePageState extends State<PinCodePage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 'Введите 4 цифры',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white.withOpacity(0.7),
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(4, (index) {
@@ -152,61 +108,35 @@ class _PinCodePageState extends State<PinCodePage> {
                 }),
               ),
               const SizedBox(height: 50),
-
               Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [1, 2, 3].map((digit) {
-                      return _buildKey(digit.toString());
-                    }).toList(),
+                    children: ['1', '2', '3'].map((digit) => _buildKey(digit)).toList(),
                   ),
                   const SizedBox(height: 20),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [4, 5, 6].map((digit) {
-                      return _buildKey(digit.toString());
-                    }).toList(),
+                    children: ['4', '5', '6'].map((digit) => _buildKey(digit)).toList(),
                   ),
                   const SizedBox(height: 20),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [7, 8, 9].map((digit) {
-                      return _buildKey(digit.toString());
-                    }).toList(),
+                    children: ['7', '8', '9'].map((digit) => _buildKey(digit)).toList(),
                   ),
                   const SizedBox(height: 20),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      SizedBox(
-                        width: 72,
-                        height: 72,
-                        child: TextButton(
-                          onPressed: _exit,
-                          child: Text(
-                            'Выйти',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white.withOpacity(0.7),
-                            ),
-                          ),
-                        ),
-                      ),
-
+                      const SizedBox(width: 72, height: 72),
                       _buildKey("0"),
-
                       SizedBox(
                         width: 72,
                         height: 72,
                         child: IconButton(
                           onPressed: _deleteDigit,
-                          icon: Icon(Icons.arrow_back,
-                              color: _pin.isNotEmpty ? Colors.white : Colors.white.withOpacity(0.5)),
-                          iconSize: 28,
+                          icon: const Icon(Icons.backspace, color: Colors.white),
+                          iconSize: 36,
                         ),
                       ),
                     ],
