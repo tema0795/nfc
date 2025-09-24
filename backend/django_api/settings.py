@@ -144,3 +144,25 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'projectapp.CustomUser'
+LANGUAGE_CODE = 'ru-RU'  # Основной язык интерфейса
+TIME_ZONE = 'Europe/Moscow'  # Часовой пояс
+USE_I18N = True  # Включение интернационализации
+USE_L10N = True  # Локализация форматов
+USE_TZ = True  # Использование часовых поясов
+
+# Дополнительные языки (опционально)
+LANGUAGES = [
+    ('ru', 'Russian'),
+    ('en', 'English'),
+]
+
+#del
+'''
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+
+}
+'''
+#del

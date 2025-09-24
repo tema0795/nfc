@@ -6,8 +6,43 @@ import uuid
 
 
 class CustomUser(AbstractUser):
+   
+    id = models.AutoField(primary_key=True, verbose_name="ID")
+    password = models.CharField(max_length=128, verbose_name="Пароль")
+    last_login = models.DateTimeField(blank=True, null=True, verbose_name="Последний вход")
+    is_superuser = models.BooleanField(default=False, verbose_name="Суперпользователь")
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        verbose_name="Имя пользователя",
+        help_text="Обязательное. 150 символов или меньше. Буквы, цифры и @/./+/-/_.",
+    )
+    first_name = models.CharField(
+        max_length=150, blank=True, verbose_name="Имя"
+    )
+    last_name = models.CharField(
+        max_length=150, blank=True, verbose_name="Фамилия"
+    )
+    email = models.EmailField(
+        blank=True, verbose_name="Адрес электронной почты"
+    )
+    is_staff = models.BooleanField(
+        default=False, verbose_name="Статус персонала"
+    )
+    is_active = models.BooleanField(
+        default=True, verbose_name="Активный"
+    )
+    date_joined = models.DateTimeField(
+        default=timezone.now, verbose_name="Дата присоединения"
+    )
+
+
+    class Meta:
+        db_table = 'projectapp_customuser'  # Указываем имя существующей таблицы
+        managed = False  # Django не управляет этой таблицей
+
     def __str__(self):
-        return self.username
+        return self.username # Отображаем username в админке
 
 class Device(models.Model):
     """

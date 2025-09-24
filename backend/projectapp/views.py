@@ -8,6 +8,10 @@ from rest_framework import status
 from .models import Device, DeviceToken, AccessEvent
 import hashlib
 
+from rest_framework import generics, permissions
+from .models import CustomUser
+from .serializers import RegisterSerializer  # Импортируем RegisterSerializer
+
 # ---------------------------------------------------
 # 1) Эндпоинт: телефон запрашивает текущий токен (AUTH)
 #    Возвращает сам токен (plaintext) — телефон должен хранить его безопасно.
@@ -97,3 +101,19 @@ def validate_token(request):
     else:
         AccessEvent.objects.create(device=device, token_hash=token_hash, result="DENY", reason="invalid_or_expired", raw_payload=request.data)
         return Response({"result":"DENY", "reason":"invalid_or_expired"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = RegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+      serializer = self.get_serializer(data=request.data)
+      serializer.is_valid(raise_exception=True)
+      user = serializer.save()
+      return Response({
+          "user": RegisterSerializer(user, context=self.get_serializer_context()).data,
+          "message": "Пользователь успешно зарегистрирован",
+      }, status=status.HTTP_201_CREATED)
