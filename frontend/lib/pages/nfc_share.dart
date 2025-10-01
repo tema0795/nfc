@@ -13,16 +13,41 @@ class NfcSharePage extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: Center(
-          child: SizedBox(
-            width: 240,
-            height: 240,
-            child: SvgPicture.asset(
-              'assets/wifi.svg',
-              fit: BoxFit.contain,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 240,
+                height: 240,
+                child: SvgPicture.asset(
+                  'assets/wifi.svg',
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Приложите устройство к NFC-метке',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Данные будут переданы автоматически',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[300],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),
+
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
         onTap: (index) {

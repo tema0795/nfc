@@ -33,7 +33,6 @@ class _PinCodePageState extends State<PinCodePage> {
 
   void _handlePinEntered() {
     if (_confirmPin == null) {
-      // Первый ввод — запоминаем
       setState(() {
         _confirmPin = _pin;
         _pin = "";
@@ -42,12 +41,10 @@ class _PinCodePageState extends State<PinCodePage> {
         const SnackBar(content: Text('Повторите PIN для подтверждения')),
       );
     } else {
-      // Второй ввод — проверяем
       if (_pin == _confirmPin) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('PIN верный!')),
         );
-        // После PIN → NFC
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const NfcSharePage()),

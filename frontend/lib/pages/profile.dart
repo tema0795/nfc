@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
             left: 24,
             right: 24,
             top: 40,
-            bottom: 16, // отступ от нижнего меню
+            bottom: 16,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 1, // "Профиль" активен
+        currentIndex: 1,
         onTap: (index) {
           if (index == 0) {
             Navigator.pushAndRemoveUntil(

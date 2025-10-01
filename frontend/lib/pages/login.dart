@@ -46,7 +46,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Фон — остаётся SVG
           Positioned.fill(
             child: SvgPicture.asset(
               'assets/background.svg',
