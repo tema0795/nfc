@@ -35,6 +35,8 @@ class CustomUser(AbstractUser):
     date_joined = models.DateTimeField(
         default=timezone.now, verbose_name="Дата присоединения"
     )
+    # будет использоваться SHA256
+    PINhash = models.CharField(max_length=256)
 
 
     class Meta:

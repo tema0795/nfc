@@ -4,6 +4,9 @@ from django.contrib.auth import get_user_model, password_validation
 from django.core import exceptions
 User = get_user_model()
 
+# ручная работа с паролями
+from  django.contrib.auth.hashers import make_password
+
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
@@ -18,6 +21,29 @@ class AccessEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = AccessEvent
         fields = '__all__'
+
+# назначение класса заполнить hashPIN пользователя в хешированном виде
+class SetPINSerializer(serializers.ModelSerializer):
+    # идентификатор телефона, например номер телефона
+    deviceID = serializers.CharField(required=True)
+    # пинкод выбранный пользователем
+    PIN = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        # необходимо включить все поля сериалайзера (поля модели и собственные)
+        fields = ['PINhash', 'deviceID', 'PIN']
+
+    def validate_PIN(self, value):
+        if len(str(value)) != 5 and str(value).isdigit():
+            raise serializers.ValidationError("Пин код не длинны 5 или состоит не из цифр")
+        return value
+    
+    # занести хеш суммы пинкода и deviceID в поле
+    def update(self, instance, validated_data):
+        instance.PINhash = make_password(self.PIN + self.deviceID, hasher='pbkdf2_sha256')
+        instance.save()
+        
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[password_validation.validate_password])

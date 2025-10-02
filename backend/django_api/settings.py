@@ -156,13 +156,19 @@ LANGUAGES = [
     ('en', 'English'),
 ]
 
-#del
+
 '''
+#nodel
+
 REST_FRAMEWORK = {
+    # список схем аутентификации
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # эта схема будет использоваться для ввода пинкода, в теории
+        'rest_framework.authentication.BasicAuthentication',
+        # 
     )
 
 }
+
+#nodel
 '''
-#del

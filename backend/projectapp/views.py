@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,7 +10,10 @@ import hashlib
 
 from rest_framework import generics, permissions
 from .models import CustomUser
-from .serializers import RegisterSerializer  # Импортируем RegisterSerializer
+from .serializers import RegisterSerializer, SetPINSerializer  # Импортируем RegisterSerializer
+
+# схема аутентификации для ввода пинкода
+from rest_framework.authentication import  BasicAuthentication
 
 # ---------------------------------------------------
 # 1) Эндпоинт: телефон запрашивает текущий токен (AUTH)
@@ -117,3 +120,17 @@ class RegisterView(generics.CreateAPIView):
           "user": RegisterSerializer(user, context=self.get_serializer_context()).data,
           "message": "Пользователь успешно зарегистрирован",
       }, status=status.HTTP_201_CREATED)
+
+
+# view задавания пинкода для аккаунта
+@api_view(['POST'])
+# используется стандарт rfc2617
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def setPIN(request):
+    serializer = SetPINSerializer(request.user, data = request.data)
+    serializer.is_valid(raise_exception=True)
+    user = serializer.save()
+    return Response(
+        {"message" : "пинкод введен на сервер",},
+        status=status.HTTP_201_CREATED)
